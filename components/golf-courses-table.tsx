@@ -15,7 +15,20 @@ import { Input } from "@/components/ui/input"
 import { Loader2, Search, ArrowUp, ArrowDown } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { supabase } from "@/lib/supabase"
+
+// Define the column meta type
+type ColumnMeta = {
+  className?: string
+}
+
+// Extend the @tanstack/react-table types
+declare module '@tanstack/react-table' {
+  interface ColumnMeta<TData extends unknown, TValue> {
+    className?: string
+  }
+}
 
 type GolfCourse = {
   id?: string
@@ -296,7 +309,10 @@ export function GolfCoursesTable() {
     }),
     // City, State column with no header
     columnHelper.accessor("city", {
-      header: () => null, // No header
+      meta: {
+        className: "hidden md:table-cell",
+      },
+      header: "",
       cell: ({ row }) => {
         const city = row.original.city
         const state = row.original.state_or_region
@@ -304,41 +320,106 @@ export function GolfCoursesTable() {
         if (!city && !state) return null
 
         return (
-          <div className="text-gray-500 hidden md:block">
+          <div className="text-sm text-gray-500 hidden md:table-cell">
             {city}
             {city && state && ", "}
             {state}
           </div>
         )
       },
-      enableSorting: false, // Disable sorting for this column
     }),
     columnHelper.accessor("golf_digest_country_rating", {
-      header: "Golf Digest",
+      header: ({ column }) => {
+        return (
+          <div
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="flex items-center justify-end cursor-pointer select-none"
+          >
+            Golf Digest
+            <span className="ml-2 h-4 w-4 inline-flex shrink-0 items-center justify-center text-muted-foreground">
+              {column.getIsSorted() === "asc" ? (
+                <ArrowUp className="h-4 w-4" />
+              ) : column.getIsSorted() === "desc" ? (
+                <ArrowDown className="h-4 w-4" />
+              ) : (
+                <div className="h-4 w-4" />
+              )}
+            </span>
+          </div>
+        )
+      },
       cell: ({ row }) => {
         const rating = row.original.golf_digest_country_rating
-        return rating ? `${rating}` : "N/A"
+        return (
+          <div className="text-center">
+            {rating ? `${rating}` : "N/A"}
+          </div>
+        )
       },
       meta: {
         className: "text-center",
       },
     }),
     columnHelper.accessor("golf_mag_country_rating", {
-      header: "Golf Mag",
+      header: ({ column }) => {
+        return (
+          <div
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="flex items-center justify-end cursor-pointer select-none"
+          >
+            Golf Mag
+            <span className="ml-2 h-4 w-4 inline-flex shrink-0 items-center justify-center text-muted-foreground">
+              {column.getIsSorted() === "asc" ? (
+                <ArrowUp className="h-4 w-4" />
+              ) : column.getIsSorted() === "desc" ? (
+                <ArrowDown className="h-4 w-4" />
+              ) : (
+                <div className="h-4 w-4" />
+              )}
+            </span>
+          </div>
+        )
+      },
       cell: ({ row }) => {
         const rating = row.original.golf_mag_country_rating
-        return rating ? `${rating}` : "N/A"
+        return (
+          <div className="text-center">
+            {rating ? `${rating}` : "N/A"}
+          </div>
+        )
       },
       meta: {
         className: "text-center",
       },
     }),
     columnHelper.accessor("consensus_ranking", {
-      header: "Consensus",
+      header: ({ column }) => {
+        return (
+          <div
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="flex items-center justify-end cursor-pointer select-none"
+          >
+            Consensus
+            <span className="ml-2 h-4 w-4 inline-flex shrink-0 items-center justify-center text-muted-foreground">
+              {column.getIsSorted() === "asc" ? (
+                <ArrowUp className="h-4 w-4" />
+              ) : column.getIsSorted() === "desc" ? (
+                <ArrowDown className="h-4 w-4" />
+              ) : (
+                <div className="h-4 w-4" />
+              )}
+            </span>
+          </div>
+        )
+      },
       cell: ({ row }) => {
         const rating = row.original.consensus_ranking
         // Format with one decimal place
-        return rating ? rating.toFixed(1) : "N/A"
+        return (
+          <div className="text-center">
+            {rating ? rating.toFixed(1) : "N/A"}
+          </div>
+        )
       },
       meta: {
         className: "text-center",
@@ -416,21 +497,19 @@ export function GolfCoursesTable() {
                   return (
                     <th
                       key={header.id}
-                      className={`compact-header ${isRankingsColumn ? "text-center ranking-header" : "text-left"} ${
-                        isSortable ? "cursor-pointer" : ""
+                      colSpan={header.colSpan}
+                      className={`px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-800 ${
+                        header.column.columnDef.meta?.className || ""
                       }`}
-                      onClick={isSortable ? header.column.getToggleSortingHandler() : undefined}
+                      onClick={
+                        header.column.getCanSort()
+                          ? header.column.getToggleSortingHandler()
+                          : undefined
+                      }
                     >
                       <div className={`header-container ${isRankingsColumn ? "justify-center" : ""}`}>
                         <span className="header-text">
                           {flexRender(header.column.columnDef.header, header.getContext())}
-                        </span>
-                        <span className={`sort-arrow ${sortDirection ? "visible" : "invisible"}`}>
-                          {sortDirection === "asc" ? (
-                            <ArrowUp className="h-4 w-4" />
-                          ) : (
-                            <ArrowDown className="h-4 w-4" />
-                          )}
                         </span>
                       </div>
                     </th>
@@ -448,16 +527,16 @@ export function GolfCoursesTable() {
                     >
                       {row.getVisibleCells().map((cell) => {
                         // Get the column meta data for styling
-                        const meta = cell.column.columnDef.meta
-                        const className = meta?.className || ""
-
                         // Check if this is the city column (should be hidden on mobile)
                         const isCityColumn = cell.column.id === "city"
 
                         return (
                           <td
                             key={cell.id}
-                            className={`compact-cell ${className} ${isCityColumn ? "hidden md:table-cell" : ""}`}
+                            // Restore original classes, excluding the problematic meta.className access
+                            className={`px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm ${
+                              cell.column.columnDef.meta?.className || ""
+                            }`}
                           >
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </td>
