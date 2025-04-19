@@ -1,0 +1,145 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom styles for the table */
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  position: relative;
+}
+
+/* Sticky header styling */
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: #1f2937; /* dark gray */
+  color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.sticky-header th {
+  font-weight: 500;
+  height: 48px;
+  white-space: nowrap;
+}
+
+.sticky-header th:hover {
+  background-color: #374151; /* slightly lighter gray for hover */
+}
+
+/* Ensure the table takes up the full width */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* Fix for sticky header in Safari */
+@supports (-webkit-touch-callout: none) {
+  .sticky-header {
+    position: -webkit-sticky;
+  }
+}
+
+/* Header container with fixed layout to prevent shifts */
+.header-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+/* Compact header with minimal padding */
+.compact-header {
+  padding: 0.5rem 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Compact cell with minimal padding */
+.compact-cell {
+  padding: 0.5rem 0.5rem;
+}
+
+/* Ranking header specific styles */
+.ranking-header {
+  min-width: 100px; /* Minimum width for ranking headers */
+}
+
+/* Header text styles */
+.header-text {
+  display: inline-block;
+}
+
+/* Sort arrow styles */
+.sort-arrow {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.25rem;
+  width: 16px; /* Fixed width for the arrow */
+}
+
+/* Make the arrow invisible but preserve space */
+.sort-arrow.invisible {
+  visibility: hidden;
+}
+
+/* Make the arrow visible */
+.sort-arrow.visible {
+  visibility: visible;
+}
