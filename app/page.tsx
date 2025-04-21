@@ -13,10 +13,7 @@ export default function Home() {
       </div>
 
       <footer className="mt-12 py-6 border-t text-center text-sm text-muted-foreground">
-        built by{" "}
-        <a href="https://twitter.com/yipsh" className="text-primary hover:underline">
-          @yipsh
-        </a>
+        built by golfers
       </footer>
     </main>
   )
